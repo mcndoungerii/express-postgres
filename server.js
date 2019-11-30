@@ -1,5 +1,12 @@
 const {Client} = require('pg');
 
+const express = require('express');
+const app = express();
+
+app.use(express.json());
+
+
+
 const client = new Client({
     user: "postgres",
     password: "postgres",
@@ -8,11 +15,41 @@ const client = new Client({
     database: "todo"
 });
 
+
+
+app.get('/v1/todos',async (req,res) => {
+    const rows = await readTodos();
+    res.setHeader('content-type','application/json');
+    res.send(JSON.stringify(rows));
+});
+
+app.post('/v1/todo',async (req,res) => {
+    let result = {};
+    try {
+        const reqJson = req.body;
+        await createTodo(reqJson.todo);
+        result.success = true;
+    }
+    catch(e) {
+        console.log(`Something went wrong ${e}`);
+        result.success =  false;
+
+    }
+    finally {
+        res.setHeader('content-type','application/json');
+        res.send(JSON.stringify(result));
+    }
+    
+    
+})
+
+app.listen(8080, () => console.log('Web Server is listening ..... on port 8080'));
+
 start();
+
 async function start() {
     await connect();
-    
-    
+   
 }
 
 async function connect() {
