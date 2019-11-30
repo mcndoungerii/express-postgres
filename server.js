@@ -16,13 +16,14 @@ const client = new Client({
 });
 
 
-
+//READ
 app.get('/v1/todos',async (req,res) => {
     const rows = await readTodos();
     res.setHeader('content-type','application/json');
     res.send(JSON.stringify(rows));
-});
+})
 
+//CREATE
 app.post('/v1/todo',async (req,res) => {
     let result = {};
     try {
@@ -41,6 +42,24 @@ app.post('/v1/todo',async (req,res) => {
     }
     
     
+})
+
+//DELETE CRUD
+app.delete('/v1/todo', async (req,res) => {
+    let result = {};
+    try{    
+        const reqJson = req.body;
+        await deleteTodo(reqJson.id);
+        result.success = true;
+    }
+    catch(e) {
+        console.log(`Something wrong happened ${e}`);
+        result.success = false;
+    }
+    finally{
+        res.setHeader('content-type','application/json');
+        res.send(JSON.stringify(result))
+    }
 })
 
 app.listen(8080, () => console.log('Web Server is listening ..... on port 8080'));
