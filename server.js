@@ -28,7 +28,7 @@ app.post('/v1/todo',async (req,res) => {
     let result = {};
     try {
         const reqJson = req.body;
-        await createTodo(reqJson.todo);
+        await createTodo(reqJson.todoText);
         result.success = true;
     }
     catch(e) {
